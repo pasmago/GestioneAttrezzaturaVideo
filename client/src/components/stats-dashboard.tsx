@@ -26,28 +26,28 @@ export function StatsDashboard() {
   const statsCards = [
     {
       title: 'Totale Attrezzature',
-      value: stats?.total || 0,
+      value: (stats as any)?.total || 0,
       icon: Package,
       iconColor: 'text-blue-600',
       iconBg: 'bg-blue-100',
     },
     {
       title: 'Disponibili',
-      value: stats?.available || 0,
+      value: (stats as any)?.available || 0,
       icon: CheckCircle,
       iconColor: 'text-green-600',
       iconBg: 'bg-green-100',
     },
     {
       title: 'In Uso',
-      value: stats?.inUse || 0,
+      value: (stats as any)?.inUse || 0,
       icon: Clock,
       iconColor: 'text-orange-600',
       iconBg: 'bg-orange-100',
     },
     {
       title: 'Manutenzione',
-      value: stats?.maintenance || 0,
+      value: (stats as any)?.maintenance || 0,
       icon: Wrench,
       iconColor: 'text-red-600',
       iconBg: 'bg-red-100',

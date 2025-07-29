@@ -36,19 +36,19 @@ export interface IStorage {
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
   getTransactionsByEquipment(equipmentId: string): Promise<Transaction[]>;
   getTransactionsByUser(userId: string): Promise<Transaction[]>;
-  getRecentTransactions(limit?: number): Promise<(Transaction & { equipment: Equipment; user: User })[]>;
+  getRecentTransactions(limit?: number): Promise<any[]>;
   updateTransaction(id: string, transaction: Partial<InsertTransaction>): Promise<Transaction>;
   deleteTransaction(id: string, deletedBy: string): Promise<void>;
   
   // Maintenance operations
   createMaintenance(maintenance: InsertMaintenance): Promise<Maintenance>;
   getMaintenanceByEquipment(equipmentId: string): Promise<Maintenance[]>;
-  getUpcomingMaintenance(): Promise<(Maintenance & { equipment: Equipment })[]>;
+  getUpcomingMaintenance(): Promise<any[]>;
   updateMaintenance(id: string, maintenance: Partial<InsertMaintenance>): Promise<Maintenance>;
   
   // Audit log operations
   createAuditLog(auditLog: InsertAuditLog): Promise<AuditLog>;
-  getAuditLogs(limit?: number): Promise<(AuditLog & { user: User })[]>;
+  getAuditLogs(limit?: number): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -155,7 +155,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(transactions.createdAt));
   }
 
-  async getRecentTransactions(limit = 10): Promise<(Transaction & { equipment: Equipment; user: User })[]> {
+  async getRecentTransactions(limit = 10): Promise<any[]> {
     return await db
       .select()
       .from(transactions)
@@ -200,7 +200,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(maintenance.scheduledDate));
   }
 
-  async getUpcomingMaintenance(): Promise<(Maintenance & { equipment: Equipment })[]> {
+  async getUpcomingMaintenance(): Promise<any[]> {
     return await db
       .select()
       .from(maintenance)
@@ -224,7 +224,7 @@ export class DatabaseStorage implements IStorage {
     return log;
   }
 
-  async getAuditLogs(limit = 50): Promise<(AuditLog & { user: User })[]> {
+  async getAuditLogs(limit = 50): Promise<any[]> {
     return await db
       .select()
       .from(auditLog)

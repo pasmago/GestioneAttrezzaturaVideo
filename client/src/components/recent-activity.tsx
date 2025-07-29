@@ -84,8 +84,8 @@ export function RecentActivity() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {transactions && transactions.length > 0 ? (
-            transactions.map((transaction: any) => {
+          {transactions && (transactions as any)?.length > 0 ? (
+            (transactions as any)?.map((transaction: any) => {
               const activity = getActivityIcon(transaction.type);
               return (
                 <div key={transaction.id} className="flex items-start space-x-3">

@@ -69,8 +69,8 @@ export function MaintenanceAlerts() {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {maintenance && maintenance.length > 0 ? (
-            maintenance.map((item: any) => {
+          {maintenance && (maintenance as any)?.length > 0 ? (
+            (maintenance as any)?.map((item: any) => {
               const alert = getMaintenanceAlert(item.scheduledDate, item.status);
               return (
                 <div key={item.id} className={`flex items-center space-x-3 p-3 rounded-lg border ${alert.color}`}>

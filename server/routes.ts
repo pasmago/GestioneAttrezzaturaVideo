@@ -31,7 +31,7 @@ if (!fs.existsSync('uploads')) {
 }
 
 interface AuthenticatedRequest extends Request {
-  user: {
+  user?: {
     claims: {
       sub: string;
       email?: string;
@@ -59,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -71,7 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Equipment routes
-  app.get('/api/equipment', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/equipment', isAuthenticated, async (req: any, res: Response) => {
     try {
       const { search, category } = req.query;
       let equipment;
@@ -89,7 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/equipment/stats', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/equipment/stats', isAuthenticated, async (req: any, res: Response) => {
     try {
       const stats = await storage.getEquipmentStats();
       res.json(stats);
@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/equipment/:id', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/equipment/:id', isAuthenticated, async (req: any, res: Response) => {
     try {
       const equipment = await storage.getEquipmentById(req.params.id);
       if (!equipment) {
@@ -112,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/equipment', isAuthenticated, upload.single('image'), async (req: AuthenticatedRequest, res: Response) => {
+  app.post('/api/equipment', isAuthenticated, upload.single('image'), async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {
@@ -144,7 +144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/equipment/:id', isAuthenticated, upload.single('image'), async (req: AuthenticatedRequest, res: Response) => {
+  app.put('/api/equipment/:id', isAuthenticated, upload.single('image'), async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {
@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/equipment/:id', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.delete('/api/equipment/:id', isAuthenticated, async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {
@@ -213,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Transaction routes
-  app.post('/api/transactions/checkout', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.post('/api/transactions/checkout', isAuthenticated, async (req: any, res: Response) => {
     try {
       const transactionData = insertTransactionSchema.parse({
         ...req.body,
@@ -247,7 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/transactions/checkin', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.post('/api/transactions/checkin', isAuthenticated, async (req: any, res: Response) => {
     try {
       const { equipmentId, conditionOnReturn, notes } = req.body;
       const checkinTime = new Date();
@@ -298,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/transactions/recent', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/transactions/recent', isAuthenticated, async (req: any, res: Response) => {
     try {
       const limit = parseInt(req.query.limit as string) || 10;
       const transactions = await storage.getRecentTransactions(limit);
@@ -309,7 +309,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/transactions/user/:userId', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/transactions/user/:userId', isAuthenticated, async (req: any, res: Response) => {
     try {
       const transactions = await storage.getTransactionsByUser(req.params.userId);
       res.json(transactions);
@@ -319,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/transactions/:id', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.delete('/api/transactions/:id', isAuthenticated, async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {
@@ -346,7 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Maintenance routes
-  app.get('/api/maintenance/upcoming', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/maintenance/upcoming', isAuthenticated, async (req: any, res: Response) => {
     try {
       const maintenance = await storage.getUpcomingMaintenance();
       res.json(maintenance);
@@ -356,7 +356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/maintenance', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.post('/api/maintenance', isAuthenticated, async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {
@@ -384,7 +384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Audit log routes (admin only)
-  app.get('/api/audit-logs', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+  app.get('/api/audit-logs', isAuthenticated, async (req: any, res: Response) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       if (user?.role !== 'admin') {

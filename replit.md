@@ -7,6 +7,8 @@ VideoGear Pro is a professional video equipment management system built with mod
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Language preference: Italian (interfaccia completamente tradotta in italiano)
+Documentation: Richiesta guida completa per l'uso in italiano
 
 ## System Architecture
 

@@ -29,21 +29,21 @@ export function NavigationHeader() {
   };
 
   const getUserInitials = () => {
-    if (user?.firstName || user?.lastName) {
-      return `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
+    if ((user as any)?.firstName || (user as any)?.lastName) {
+      return `${(user as any).firstName?.[0] || ''}${(user as any).lastName?.[0] || ''}`.toUpperCase();
     }
-    return user?.email?.[0]?.toUpperCase() || 'U';
+    return (user as any)?.email?.[0]?.toUpperCase() || 'U';
   };
 
   const getUserDisplayName = () => {
-    if (user?.firstName || user?.lastName) {
-      return `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    if ((user as any)?.firstName || (user as any)?.lastName) {
+      return `${(user as any).firstName || ''} ${(user as any).lastName || ''}`.trim();
     }
-    return user?.email || 'Utente';
+    return (user as any)?.email || 'Utente';
   };
 
   const getRoleLabel = () => {
-    return user?.role === 'admin' ? 'Amministratore' : 'Operatore';
+    return (user as any)?.role === 'admin' ? 'Amministratore' : 'Operatore';
   };
 
   return (
@@ -83,7 +83,7 @@ export function NavigationHeader() {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Action Buttons */}
-            {user?.role === 'admin' && (
+            {(user as any)?.role === 'admin' && (
               <div className="hidden sm:flex items-center space-x-3">
                 <Button size="sm" className="bg-primary hover:bg-primary/90">
                   <Plus className="h-4 w-4 mr-2" />
@@ -112,7 +112,7 @@ export function NavigationHeader() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-3 p-2">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.profileImageUrl} />
+                    <AvatarImage src={(user as any)?.profileImageUrl} />
                     <AvatarFallback className="bg-primary/10 text-primary">
                       {getUserInitials()}
                     </AvatarFallback>
