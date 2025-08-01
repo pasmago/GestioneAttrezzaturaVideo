@@ -1,0 +1,578 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoGear Pro - Gestione Attrezzatura Video</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'inter': ['Inter', 'sans-serif'],
+                },
+                colors: {
+                    primary: {
+                        50: '#EBF3FF',
+                        100: '#CCE0FF',
+                        500: '#0066FF',
+                        600: '#004BBF',
+                        700: '#003D99'
+                    },
+                    success: '#28A745',
+                    warning: '#FFC107',
+                    danger: '#DC3545',
+                    available: '#00C851',
+                    inuse: '#FF8800',
+                    maintenance: '#FF3547'
+                }
+            }
+        }
+    };
+    </script>
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: Navigation Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-video text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">VideoGear Pro</h1>
+                            <p class="text-sm text-gray-500">Gestione Attrezzatura</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#dashboard" class="text-primary-600 font-medium border-b-2 border-primary-600 pb-1">Dashboard</a>
+                    <a href="#inventory" class="text-gray-600 hover:text-gray-900 transition-colors">Inventario</a>
+                    <a href="#history" class="text-gray-600 hover:text-gray-900 transition-colors">Storico</a>
+                    <a href="#maintenance" class="text-gray-600 hover:text-gray-900 transition-colors">Manutenzione</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 bg-danger text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-primary-600"></i>
+                        </div>
+                        <div class="hidden sm:block">
+                            <p class="text-sm font-medium text-gray-900" data-bind="user.name">Marco Rossi</p>
+                            <p class="text-xs text-gray-500" data-bind="user.role">Amministratore</p>
+                        </div>
+                        <button class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Navigation Header -->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- @COMPONENT: Dashboard Overview -->
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Dashboard Panoramica</h2>
+                    <p class="text-gray-600 mt-1">Monitoraggio in tempo reale dell'attrezzatura video</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex space-x-3">
+                    <button class="bg-primary-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Nuova Attrezzatura
+                    </button>
+                    <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-download mr-2"></i>Esporta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Totale Attrezzature</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" data-bind="stats.total">127</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-boxes text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Disponibili</p>
+                            <p class="text-3xl font-bold text-available mt-2" data-bind="stats.available">94</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check-circle text-available text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">In Uso</p>
+                            <p class="text-3xl font-bold text-inuse mt-2" data-bind="stats.inUse">28</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-inuse text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Manutenzione</p>
+                            <p class="text-3xl font-bold text-maintenance mt-2" data-bind="stats.maintenance">5</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tools text-maintenance text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Dashboard Overview -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- @COMPONENT: Equipment List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Inventario Attrezzature</h3>
+                            <div class="mt-3 sm:mt-0 flex items-center space-x-3">
+                                <div class="relative">
+                                    <input type="text" placeholder="Cerca attrezzatura..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <select class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                    <option>Tutte le categorie</option>
+                                    <option>Fotocamere</option>
+                                    <option>Obiettivi</option>
+                                    <option>Microfoni</option>
+                                    <option>Illuminazione</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left py-3 px-6 text-sm font-medium text-gray-500 uppercase tracking-wider">Attrezzatura</th>
+                                    <th class="text-left py-3 px-6 text-sm font-medium text-gray-500 uppercase tracking-wider">Stato</th>
+                                    <th class="text-left py-3 px-6 text-sm font-medium text-gray-500 uppercase tracking-wider">Utilizzatore</th>
+                                    <th class="text-left py-3 px-6 text-sm font-medium text-gray-500 uppercase tracking-wider">Ore Totali</th>
+                                    <th class="text-left py-3 px-6 text-sm font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <!-- @MAP: equipment.map(item => ( -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-4">
+                                            <!-- Professional camera with various lenses and equipment on white background -->
+                                            <img src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=80" alt="Sony FX6 Camera" class="w-16 h-12 rounded-lg object-cover border border-gray-200" data-mock-image="true"/>
+                                            <div>
+                                                <p class="font-medium text-gray-900" data-bind="item.name">Sony FX6</p>
+                                                <p class="text-sm text-gray-500" data-bind="item.code">SN: FX6-001</p>
+                                                <p class="text-xs text-gray-400" data-bind="item.category">Fotocamera</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-available">
+                                            <i class="fas fa-circle text-available mr-1 text-xs"></i>
+                                            Disponibile
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-sm text-gray-500">-</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-sm text-gray-900" data-bind="item.totalHours">324h</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-primary-600 hover:text-primary-900 transition-colors" data-event="click:handleCheckout">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-4">
+                                            <!-- Professional microphone setup in studio environment -->
+                                            <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=80" alt="Rode VideoMic Pro" class="w-16 h-12 rounded-lg object-cover border border-gray-200" data-mock-image="true"/>
+                                            <div>
+                                                <p class="font-medium text-gray-900" data-bind="item.name">Rode VideoMic Pro+</p>
+                                                <p class="text-sm text-gray-500" data-bind="item.code">SN: RVM-012</p>
+                                                <p class="text-xs text-gray-400" data-bind="item.category">Microfono</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-inuse">
+                                            <i class="fas fa-circle text-inuse mr-1 text-xs"></i>
+                                            In Uso
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <span class="text-xs font-medium text-blue-600">LM</span>
+                                            </div>
+                                            <span class="text-sm text-gray-900" data-bind="item.currentUser">Luca Martini</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-sm text-gray-900" data-bind="item.totalHours">156h</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-available hover:text-green-700 transition-colors" data-event="click:handleCheckin">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-4">
+                                            <!-- Professional LED lighting panel setup -->
+                                            <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=80" alt="LED Panel Light" class="w-16 h-12 rounded-lg object-cover border border-gray-200" data-mock-image="true"/>
+                                            <div>
+                                                <p class="font-medium text-gray-900" data-bind="item.name">Aputure AL-MX</p>
+                                                <p class="text-sm text-gray-500" data-bind="item.code">SN: LED-005</p>
+                                                <p class="text-xs text-gray-400" data-bind="item.category">Illuminazione</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-maintenance">
+                                            <i class="fas fa-circle text-maintenance mr-1 text-xs"></i>
+                                            Manutenzione
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-sm text-gray-500">-</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="text-sm text-gray-900" data-bind="item.totalHours">89h</span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-gray-300 cursor-not-allowed">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Mostrando <strong>1-10</strong> di <strong>127</strong> attrezzature
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                Precedente
+                            </button>
+                            <button class="px-3 py-1 text-sm bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors">
+                                1
+                            </button>
+                            <button class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                2
+                            </button>
+                            <button class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                Successivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Equipment List -->
+
+            <!-- @COMPONENT: Sidebar Widgets -->
+            <div class="space-y-6">
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Attività Recenti</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- @MAP: recentActivity.map(activity => ( -->
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-sign-in-alt text-available text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-gray-900">
+                                        <span class="font-medium" data-bind="activity.user">Sara Bianchi</span> ha riconsegnato
+                                        <span class="font-medium" data-bind="activity.equipment">Canon EOS R5</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500" data-bind="activity.time">2 minuti fa</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-sign-out-alt text-inuse text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-gray-900">
+                                        <span class="font-medium" data-bind="activity.user">Paolo Verdi</span> ha prelevato
+                                        <span class="font-medium" data-bind="activity.equipment">DJI Ronin SC</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500" data-bind="activity.time">15 minuti fa</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-maintenance text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-gray-900">
+                                        <span class="font-medium" data-bind="activity.equipment">Rode Wireless GO</span> segnalato per manutenzione
+                                    </p>
+                                    <p class="text-xs text-gray-500" data-bind="activity.time">1 ora fa</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        
+                        <button class="w-full mt-4 text-primary-600 text-sm font-medium hover:text-primary-700 transition-colors">
+                            Visualizza tutto lo storico
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Azioni Rapide</h3>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <button class="w-full bg-primary-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-600 transition-colors flex items-center justify-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Aggiungi Attrezzatura
+                        </button>
+                        <button class="w-full bg-available text-white py-3 px-4 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center">
+                            <i class="fas fa-qrcode mr-2"></i>
+                            Scansiona QR
+                        </button>
+                        <button class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center">
+                            <i class="fas fa-file-export mr-2"></i>
+                            Esporta Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Maintenance Alerts -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Avvisi Manutenzione</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <i class="fas fa-calendar-alt text-warning"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Sony A7S III</p>
+                                    <p class="text-xs text-gray-600">Manutenzione programmata in 3 giorni</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                                <i class="fas fa-exclamation-circle text-danger"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Canon 70-200mm</p>
+                                    <p class="text-xs text-gray-600">Richiede manutenzione urgente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Sidebar Widgets -->
+        </div>
+
+        <!-- @COMPONENT: Equipment Checkout Modal -->
+        <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Prelievo Attrezzatura</h3>
+                        <button class="text-gray-400 hover:text-gray-600" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <!-- Professional camera close-up detail shot -->
+                        <img src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=80&h=80" alt="Sony FX6 Camera" class="w-16 h-16 rounded-lg object-cover border border-gray-200" data-mock-image="true"/>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Sony FX6</h4>
+                            <p class="text-sm text-gray-500">SN: FX6-001</p>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-available mt-1">
+                                Disponibile
+                            </span>
+                        </div>
+                    </div>
+
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Scopo Utilizzo *</label>
+                            <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent" rows="3" placeholder="Descrivi brevemente l'uso previsto dell'attrezzatura..." required data-implementation="Should validate required field"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Prelievo *</label>
+                                <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent" required data-bind="currentDate"/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ora Prelievo *</label>
+                                <input type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent" required data-bind="currentTime"/>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                <div class="text-sm text-blue-800">
+                                    <p class="font-medium">Conferma Responsabilità</p>
+                                    <p class="mt-1">Confermando il prelievo, ti assumi la responsabilità per l'uso corretto e la restituzione dell'attrezzatura in buone condizioni.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- @FUNCTIONALITY: This signature pad should implement digital signature capture -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Firma Digitale *</label>
+                            <div class="border border-gray-300 rounded-lg h-32 bg-gray-50 flex items-center justify-center">
+                                <p class="text-gray-500 text-sm">Tocca per firmare</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors" onclick="closeModal()">
+                                Annulla
+                            </button>
+                            <button type="submit" class="flex-1 bg-primary-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-600 transition-colors" data-event="click:handleConfirmCheckout">
+                                Conferma Prelievo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Equipment Checkout Modal -->
+
+        <!-- @COMPONENT: Mobile Menu Toggle -->
+        <button class="fixed bottom-6 right-6 bg-primary-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-primary-600 transition-colors md:hidden z-40">
+            <i class="fas fa-bars"></i>
+        </button>
+        <!-- @END_COMPONENT: Mobile Menu Toggle -->
+    </div>
+
+    <script>
+    (function() {
+        // Modal functionality
+        window.closeModal = function() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        };
+
+        // Equipment checkout handler
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-event*="handleCheckout"]')) {
+                e.preventDefault();
+                document.getElementById('checkoutModal').classList.remove('hidden');
+                // TODO: Populate modal with selected equipment data
+            }
+        });
+
+        // Auto-populate current date and time
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateInput = document.querySelector('input[type="date"]');
+            const timeInput = document.querySelector('input[type="time"]');
+            
+            if (dateInput) {
+                dateInput.value = now.toISOString().split('T')[0];
+            }
+            if (timeInput) {
+                timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5);
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('checkoutModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // TODO: Implement business logic for:
+        // - Real-time equipment status updates
+        // - Digital signature capture and validation
+        // - Equipment search and filtering
+        // - User role-based access control
+        // - Maintenance scheduling system
+        // - Usage hours calculation
+        // - Audit trail logging
+        // - Report generation and export
+    })();
+    </script>
+</body>
+</html>
