@@ -1,9 +1,9 @@
 import React from 'react';
-import { useRoutes } from 'wouter';
+// CORREZIONE QUI: Importa useRoutes da 'wouter/use-routes'
+import { useRoutes } from 'wouter/use-routes'; 
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
-// CORREZIONE QUI: Cambia 'NotFound' in 'not-found' per corrispondere al nome del file
 import NotFound from './pages/not-found'; 
 // Importa i componenti UserButton e SignOutButton da Clerk
 import { UserButton, SignOutButton } from "@clerk/clerk-react";
@@ -62,5 +62,6 @@ export default function App() {
     </>
   );
 }
+
 
 
