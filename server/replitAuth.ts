@@ -28,7 +28,8 @@ export async function setupAuth(app: Express) {
     jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`,
     domain: process.env.CLERK_DOMAIN, 
     isSatellite: true,
-    signInUrl: process.env.PUBLIC_FRONTEND_URL, // <-- AGGIUNTO: URL di login per app satellite
+    // CORREZIONE QUI: signInUrl deve puntare al dominio di Clerk, non al tuo frontend
+    signInUrl: `${process.env.CLERK_ISSUER_URL}/sign-in`, // O l'URL specifico del tuo sign-in di Clerk
   }));
 
   app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {

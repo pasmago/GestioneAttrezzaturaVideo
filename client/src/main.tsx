@@ -22,9 +22,8 @@ createRoot(document.getElementById("root")!).render(
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
       domain={CLERK_FRONTEND_API_URL}
-      // AGGIORNAMENTO QUI: Usa le nuove proprietà per il reindirizzamento
-      fallbackRedirectUrl="/" // URL di fallback dopo login/registrazione
-      forceRedirectUrl="/"    // Forza il reindirizzamento a questo URL
+      // RIMOSSO: fallbackRedirectUrl e forceRedirectUrl.
+      // Lascia che Clerk gestisca i reindirizzamenti predefiniti per le app satellite.
     >
       <App />
     </ClerkProvider>
