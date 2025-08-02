@@ -1,13 +1,16 @@
 import { ClerkExpressRequireAuth, ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 import type { Express, Request, Response, NextFunction, RequestHandler } from "express";
-import session from "express-session";
-import connectPg from "connect-pg-simple";
+// Rimuovi l'import di session e connectPg se non usi express-session altrove
+// import session from "express-session";
+// import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.CLERK_SECRET_KEY || !process.env.CLERK_ISSUER_URL) {
-  throw new Error("Missing Clerk environment variables: CLERK_SECRET_KEY or CLERK_ISSUER_URL");
+if (!process.env.CLERK_SECRET_KEY || !process.env.CLERK_ISSUER_URL || !process.env.PUBLIC_FRONTEND_URL) {
+  throw new Error("Missing Clerk environment variables: CLERK_SECRET_KEY, CLERK_ISSUER_URL, or PUBLIC_FRONTEND_URL");
 }
 
+// Rimuovi completamente la funzione getSession() se non usi express-session
+/*
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
@@ -30,6 +33,7 @@ export function getSession() {
     },
   });
 }
+*/
 
 async function upsertUser(claims: any) {
   await storage.upsertUser({
@@ -43,24 +47,25 @@ async function upsertUser(claims: any) {
 
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
-  app.use(getSession());
+  // Rimuovi l'uso di getSession()
+  // app.use(getSession());
 
   console.log("CLERK_ISSUER_URL (backend):", process.env.CLERK_ISSUER_URL);
 
+  // Modifica qui: usa jwksUri e il percorso completo
   app.use(ClerkExpressWithAuth({
     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
     secretKey: process.env.CLERK_SECRET_KEY,
-    jwtKey: process.env.CLERK_ISSUER_URL,
+    // jwtKey è deprecato, usa jwksUri
+    jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`, // <-- CORREZIONE CRUCIALE
   }));
 
   app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {
     console.log("req.auth (from ClerkExpressWithAuth):", req.auth);
 
-    // Se Clerk ha popolato req.auth con un userId valido, allora l'utente è autenticato
     if (req.auth && req.auth.userId) {
       try {
         const claims = req.auth.sessionClaims;
-        // Assicurati che i claims esistano prima di tentare di leggerli
         if (claims && claims.sub) {
           req.user = {
             claims: {
@@ -69,22 +74,16 @@ export async function setupAuth(app: Express) {
               first_name: claims.first_name,
               last_name: claims.last_name,
             },
-            // Aggiungi qui altri campi che ti aspetti da Clerk se necessario
-            // Es: id: req.auth.userId,
-            //     profileImageUrl: req.auth.user?.profileImageUrl, // Se disponibile
           };
           await upsertUser(req.user.claims);
         } else {
-          // Se userId esiste ma i claims sono null, imposta req.user a undefined
-          // per evitare errori successivi
           req.user = undefined;
         }
       } catch (error) {
         console.error("Error upserting user from Clerk claims:", error);
-        req.user = undefined; // In caso di errore, assicurati che req.user sia undefined
+        req.user = undefined;
       }
     } else {
-      // Se req.auth o req.auth.userId sono null, l'utente non è autenticato
       req.user = undefined;
     }
     next();
@@ -92,10 +91,7 @@ export async function setupAuth(app: Express) {
 
   app.get('/api/auth/user', isAuthenticated, async (req: any, res: Response) => {
     try {
-      // Questo controllo ora dovrebbe essere sicuro, dato che req.user viene impostato sopra
       if (!req.user || !req.user.claims || !req.user.claims.sub) {
-        // Se per qualche motivo req.user non è stato popolato,
-        // invia un errore 401 Unauthenticated
         console.error("User not authenticated or claims missing in /api/auth/user route.");
         return res.status(401).json({ message: "Unauthenticated" });
       }
