@@ -4,7 +4,6 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-// Questo controllo ora è per CLERK_SECRET_KEY
 if (!process.env.CLERK_SECRET_KEY || !process.env.CLERK_ISSUER_URL) {
   throw new Error("Missing Clerk environment variables: CLERK_SECRET_KEY or CLERK_ISSUER_URL");
 }
@@ -14,7 +13,7 @@ export function getSession() {
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: false, // O true, se vuoi che crei la tabella sessions
+    createTableIfMissing: false,
     ttl: sessionTtl,
     tableName: "sessions",
   });
@@ -45,6 +44,9 @@ async function upsertUser(claims: any) {
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
+
+  // Aggiungi questo console.log per debug. Lo rimuoveremo dopo.
+  console.log("CLERK_ISSUER_URL (backend):", process.env.CLERK_ISSUER_URL);
 
   app.use(ClerkExpressWithAuth({
     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
