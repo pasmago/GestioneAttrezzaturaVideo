@@ -2,6 +2,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Video, Shield, Clock, BarChart } from 'lucide-react';
+// Importa SignInButton da Clerk
+import { SignInButton } from "@clerk/clerk-react";
 
 export default function Landing() {
   return (
@@ -24,9 +26,10 @@ export default function Landing() {
           </p>
           
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            <a href="/api/login">
+            {/* Sostituisci <a> con SignInButton per avviare il flusso di login di Clerk */}
+            <SignInButton mode="redirect" afterSignInUrl="/" afterSignUpUrl="/">
               Accedi al Sistema
-            </a>
+            </SignInButton>
           </Button>
         </div>
 
@@ -168,9 +171,10 @@ export default function Landing() {
             Accedi al sistema e inizia a gestire la tua attrezzatura video in modo professionale
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            <a href="/api/login">
+            {/* Sostituisci <a> con SignInButton */}
+            <SignInButton mode="redirect" afterSignInUrl="/" afterSignUpUrl="/">
               Accedi Ora
-            </a>
+            </SignInButton>
           </Button>
         </div>
       </div>
