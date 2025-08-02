@@ -27,7 +27,8 @@ export async function setupAuth(app: Express) {
     secretKey: process.env.CLERK_SECRET_KEY,
     jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`,
     domain: process.env.CLERK_DOMAIN, 
-    isSatellite: true, // <-- AGGIUNTO: Indica che è un dominio satellite
+    isSatellite: true,
+    signInUrl: process.env.PUBLIC_FRONTEND_URL, // <-- AGGIUNTO: URL di login per app satellite
   }));
 
   app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {
