@@ -1,22 +1,12 @@
 import React from 'react';
-// CORREZIONE QUI: Importa useRoutes direttamente da 'wouter'
-import { useRoutes } from 'wouter'; 
+// Importa Router e Route da 'wouter'
+import { Router, Route } from 'wouter'; 
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
 import NotFound from './pages/not-found'; 
 // Importa i componenti UserButton e SignOutButton da Clerk
 import { UserButton, SignOutButton } from "@clerk/clerk-react";
-
-// Definisci le rotte dell'applicazione
-const publicRoutes = {
-  '/': () => <Landing />,
-};
-
-const authenticatedRoutes = {
-  '/dashboard': () => <Dashboard />,
-  // Aggiungi qui altre rotte autenticate
-};
 
 export default function App() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -29,9 +19,6 @@ export default function App() {
       </div>
     );
   }
-
-  // Se l'utente non è autenticato, usa solo le rotte pubbliche
-  const routeResult = useRoutes(isAuthenticated ? { ...publicRoutes, ...authenticatedRoutes } : publicRoutes);
 
   return (
     <>
@@ -57,12 +44,26 @@ export default function App() {
         </nav>
       </header>
       <main className="pt-20"> {/* Aggiungi padding per evitare che il contenuto sia sotto l'header */}
-        {routeResult || <NotFound />}
+        {/* Usa il componente Router per definire le rotte */}
+        <Router>
+          {/* Rotta pubblica: Landing Page */}
+          <Route path="/" component={Landing} />
+
+          {/* Rotte autenticate */}
+          {isAuthenticated && (
+            <>
+              <Route path="/dashboard" component={Dashboard} />
+              {/* Aggiungi qui altre rotte autenticate */}
+            </>
+          )}
+
+          {/* Rotta 404 (NotFound) - Gestisce tutte le rotte non corrispondenti */}
+          {/* Se l'utente non è autenticato e tenta di accedere a una rotta autenticata,
+              verrà reindirizzato alla Landing page dal controllo isAuthenticated sopra.
+              Questo NotFound gestirà solo le rotte non esistenti. */}
+          <Route component={NotFound} />
+        </Router>
       </main>
     </>
   );
 }
-
-
-
-
