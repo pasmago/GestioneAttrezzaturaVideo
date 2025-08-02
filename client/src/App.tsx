@@ -1,6 +1,6 @@
 import React from 'react';
-// CORREZIONE QUI: Importa useRoutes da 'wouter/use-routes'
-import { useRoutes } from 'wouter/use-routes'; 
+// CORREZIONE QUI: Importa useRoutes direttamente da 'wouter'
+import { useRoutes } from 'wouter'; 
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
@@ -62,6 +62,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
