@@ -45,7 +45,6 @@ export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
 
-  // Aggiungi questo console.log per debug. Lo rimuoveremo dopo.
   console.log("CLERK_ISSUER_URL (backend):", process.env.CLERK_ISSUER_URL);
 
   app.use(ClerkExpressWithAuth({
@@ -55,6 +54,9 @@ export async function setupAuth(app: Express) {
   }));
 
   app.use(async (req: Request & { auth?: any; session?: any }, res: Response, next: NextFunction) => {
+    // Aggiungi questo console.log per debug. Lo rimuoveremo dopo.
+    console.log("req.auth (from ClerkExpressWithAuth):", req.auth);
+
     if (req.auth && req.auth.userId && req.auth.sessionId) {
       try {
         const claims = req.auth.sessionClaims;
@@ -78,6 +80,7 @@ export async function setupAuth(app: Express) {
 
   app.get('/api/auth/user', isAuthenticated, async (req: any, res: Response) => {
     try {
+      // Questo errore si verifica se req.user è undefined
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       res.json(user);
