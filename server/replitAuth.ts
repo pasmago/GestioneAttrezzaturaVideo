@@ -20,13 +20,14 @@ export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
 
   console.log("CLERK_ISSUER_URL (backend):", process.env.CLERK_ISSUER_URL);
-  console.log("CLERK_DOMAIN (backend):", process.env.CLERK_DOMAIN); // Aggiunto per debug
+  console.log("CLERK_DOMAIN (backend):", process.env.CLERK_DOMAIN); 
 
   app.use(ClerkExpressWithAuth({
     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
     secretKey: process.env.CLERK_SECRET_KEY,
     jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`,
-    domain: process.env.CLERK_DOMAIN, // <-- AGGIUNTO: CRUCIALE per la gestione dei cookie in produzione
+    domain: process.env.CLERK_DOMAIN, 
+    isSatellite: true, // <-- AGGIUNTO: Indica che è un dominio satellite
   }));
 
   app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {
