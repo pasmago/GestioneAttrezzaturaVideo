@@ -14,13 +14,12 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById("root")!).render(
   <ClerkProvider
     publishableKey={PUBLISHABLE_KEY}
-    // Aggiungi la prop domain per specificare il dominio di Clerk
     domain={CLERK_FRONTEND_API}
-    // Potrebbe essere utile anche specificare l'URL di reindirizzamento qui,
-    // se il fallback nel dashboard di Clerk non funziona come previsto.
-    // afterSignInUrl="/"
-    // afterSignUpUrl="/"
+    // Specifica esplicitamente dove reindirizzare dopo il login/registrazione
+    afterSignInUrl="/"
+    afterSignUpUrl="/"
   >
     <App />
   </ClerkProvider>
 );
+
