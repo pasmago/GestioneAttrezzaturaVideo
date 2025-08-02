@@ -1,39 +1,10 @@
 import { ClerkExpressRequireAuth, ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 import type { Express, Request, Response, NextFunction, RequestHandler } from "express";
-// Rimuovi l'import di session e connectPg se non usi express-session altrove
-// import session from "express-session";
-// import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.CLERK_SECRET_KEY || !process.env.CLERK_ISSUER_URL || !process.env.PUBLIC_FRONTEND_URL) {
-  throw new Error("Missing Clerk environment variables: CLERK_SECRET_KEY, CLERK_ISSUER_URL, or PUBLIC_FRONTEND_URL");
+if (!process.env.CLERK_SECRET_KEY || !process.env.CLERK_ISSUER_URL || !process.env.PUBLIC_FRONTEND_URL || !process.env.CLERK_DOMAIN) {
+  throw new Error("Missing Clerk environment variables: CLERK_SECRET_KEY, CLERK_ISSUER_URL, PUBLIC_FRONTEND_URL, or CLERK_DOMAIN");
 }
-
-// Rimuovi completamente la funzione getSession() se non usi express-session
-/*
-export function getSession() {
-  const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
-  const pgStore = connectPg(session);
-  const sessionStore = new pgStore({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
-    ttl: sessionTtl,
-    tableName: "sessions",
-  });
-  return session({
-    secret: process.env.SESSION_SECRET!,
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: sessionTtl,
-      sameSite: "lax",
-    },
-  });
-}
-*/
 
 async function upsertUser(claims: any) {
   await storage.upsertUser({
@@ -47,17 +18,15 @@ async function upsertUser(claims: any) {
 
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
-  // Rimuovi l'uso di getSession()
-  // app.use(getSession());
 
   console.log("CLERK_ISSUER_URL (backend):", process.env.CLERK_ISSUER_URL);
+  console.log("CLERK_DOMAIN (backend):", process.env.CLERK_DOMAIN); // Aggiunto per debug
 
-  // Modifica qui: usa jwksUri e il percorso completo
   app.use(ClerkExpressWithAuth({
     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
     secretKey: process.env.CLERK_SECRET_KEY,
-    // jwtKey è deprecato, usa jwksUri
-    jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`, // <-- CORREZIONE CRUCIALE
+    jwksUri: `${process.env.CLERK_ISSUER_URL}/.well-known/jwks.json`,
+    domain: process.env.CLERK_DOMAIN, // <-- AGGIUNTO: CRUCIALE per la gestione dei cookie in produzione
   }));
 
   app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {
