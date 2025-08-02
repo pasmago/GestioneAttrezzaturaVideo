@@ -53,13 +53,14 @@ export async function setupAuth(app: Express) {
     jwtKey: process.env.CLERK_ISSUER_URL,
   }));
 
-  app.use(async (req: Request & { auth?: any; session?: any }, res: Response, next: NextFunction) => {
-    // Aggiungi questo console.log per debug. Lo rimuoveremo dopo.
+  app.use(async (req: Request & { auth?: any; user?: any; session?: any }, res: Response, next: NextFunction) => {
     console.log("req.auth (from ClerkExpressWithAuth):", req.auth);
 
-    if (req.auth && req.auth.userId && req.auth.sessionId) {
+    // Se Clerk ha popolato req.auth con un userId valido, allora l'utente è autenticato
+    if (req.auth && req.auth.userId) {
       try {
         const claims = req.auth.sessionClaims;
+        // Assicurati che i claims esistano prima di tentare di leggerli
         if (claims && claims.sub) {
           req.user = {
             claims: {
@@ -68,19 +69,36 @@ export async function setupAuth(app: Express) {
               first_name: claims.first_name,
               last_name: claims.last_name,
             },
+            // Aggiungi qui altri campi che ti aspetti da Clerk se necessario
+            // Es: id: req.auth.userId,
+            //     profileImageUrl: req.auth.user?.profileImageUrl, // Se disponibile
           };
           await upsertUser(req.user.claims);
+        } else {
+          // Se userId esiste ma i claims sono null, imposta req.user a undefined
+          // per evitare errori successivi
+          req.user = undefined;
         }
       } catch (error) {
         console.error("Error upserting user from Clerk claims:", error);
+        req.user = undefined; // In caso di errore, assicurati che req.user sia undefined
       }
+    } else {
+      // Se req.auth o req.auth.userId sono null, l'utente non è autenticato
+      req.user = undefined;
     }
     next();
   });
 
   app.get('/api/auth/user', isAuthenticated, async (req: any, res: Response) => {
     try {
-      // Questo errore si verifica se req.user è undefined
+      // Questo controllo ora dovrebbe essere sicuro, dato che req.user viene impostato sopra
+      if (!req.user || !req.user.claims || !req.user.claims.sub) {
+        // Se per qualche motivo req.user non è stato popolato,
+        // invia un errore 401 Unauthenticated
+        console.error("User not authenticated or claims missing in /api/auth/user route.");
+        return res.status(401).json({ message: "Unauthenticated" });
+      }
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       res.json(user);
