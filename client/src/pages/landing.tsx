@@ -25,11 +25,11 @@ export default function Landing() {
           </p>
           
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* AGGIORNAMENTO QUI: Usa mode="modal" e le nuove proprietà di reindirizzamento */}
+            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl */}
             <SignInButton 
               mode="modal" 
-              fallbackRedirectUrl="/" 
-              forceRedirectUrl="/"
+              // fallbackRedirectUrl="/" <-- Rimuovi questa riga
+              // forceRedirectUrl="/"    <-- Rimuovi questa riga
             >
               Accedi al Sistema
             </SignInButton>
@@ -158,7 +158,7 @@ export default function Landing() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Gestione Ruoli</h4>
-                  <p className="text-gray-600">Controllo granulare degli accessi e delle funzionalità</p>
+                  <p className="text-sm text-gray-600">Controllo granulare degli accessi e delle funzionalità</p>
                 </div>
               </div>
             </div>
@@ -174,11 +174,11 @@ export default function Landing() {
             Accedi al sistema e inizia a gestire la tua attrezzatura video in modo professionale
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* AGGIORNAMENTO QUI: Usa mode="modal" e le nuove proprietà di reindirizzamento */}
+            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl */}
             <SignInButton 
               mode="modal" 
-              fallbackRedirectUrl="/" 
-              forceRedirectUrl="/"
+              // fallbackRedirectUrl="/" <-- Rimuovi questa riga
+              // forceRedirectUrl="/"    <-- Rimuovi questa riga
             >
               Accedi Ora
             </SignInButton>
