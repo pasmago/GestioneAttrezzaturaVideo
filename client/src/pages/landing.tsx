@@ -25,7 +25,7 @@ export default function Landing() {
           </p>
           
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl da SignInButton */}
+            {/* CORREZIONE CRUCIALE: Rimosse fallbackRedirectUrl e forceRedirectUrl */}
             <SignInButton 
               mode="modal" 
               // fallbackRedirectUrl="/" <-- Rimuovi questa riga
@@ -174,7 +174,7 @@ export default function Landing() {
             Accedi al sistema e inizia a gestire la tua attrezzatura video in modo professionale
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl da SignInButton */}
+            {/* CORREZIONE CRUCIALE: Rimosse fallbackRedirectUrl e forceRedirectUrl */}
             <SignInButton 
               mode="modal" 
               // fallbackRedirectUrl="/" <-- Rimuovi questa riga
