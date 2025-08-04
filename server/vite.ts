@@ -69,27 +69,39 @@ export async function setupVite(app: Express, server: Server) {
 
 export function serveStatic(app: Express) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public"); 
+  const indexPath = path.resolve(distPath, "index.html"); // Percorso completo a index.html
 
-  log(`Attempting to serve static files from: ${distPath}`); // Debug log
+  log(`Attempting to serve static files from: ${distPath}`);
 
   if (!fs.existsSync(distPath)) {
-    log(`ERROR: Build directory not found: ${distPath}`, "static-server"); // Debug log
+    log(`ERROR: Build directory not found: ${distPath}`, "static-server");
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
 
-  app.use(express.static(distPath));
-
-  // Fallback to index.html for all non-static file requests (e.g., client-side routes)
-  app.use("*", (req, res) => {
-    const indexPath = path.resolve(distPath, "index.html");
+  // 1. Servire esplicitamente index.html per la rotta radice "/"
+  app.get("/", (req, res) => {
     if (fs.existsSync(indexPath)) {
-      log(`Serving index.html for request: ${req.originalUrl}`, "static-server"); // Debug log
+      log(`Serving index.html for root request: ${req.originalUrl}`, "static-server");
       res.sendFile(indexPath);
     } else {
-      log(`ERROR: index.html not found at ${indexPath}`, "static-server"); // Debug log
-      res.status(404).send("404 Not Found: index.html missing"); // More specific 404
+      log(`ERROR: index.html not found at ${indexPath} for root request`, "static-server");
+      res.status(404).send("404 Not Found: index.html missing for root");
+    }
+  });
+
+  // 2. Servire tutti gli altri file statici dalla cartella dist/public
+  app.use(express.static(distPath));
+
+  // 3. Fallback per tutte le altre rotte (per il routing lato client)
+  app.use("*", (req, res) => {
+    if (fs.existsSync(indexPath)) {
+      log(`Serving index.html for fallback request: ${req.originalUrl}`, "static-server");
+      res.sendFile(indexPath);
+    } else {
+      log(`ERROR: index.html not found at ${indexPath} for fallback`, "static-server");
+      res.status(404).send("404 Not Found: index.html missing for fallback");
     }
   });
 }
