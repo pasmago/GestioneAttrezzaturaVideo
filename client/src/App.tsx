@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Router, Route, useLocation } from 'wouter'; // Importa useLocation
+import React from 'react';
+import { Router, Route } from 'wouter'; // Rimuovi useLocation se non più usato
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
@@ -9,19 +9,6 @@ import { Button } from '@/components/ui/button';
 
 export default function App() {
   const { isAuthenticated, isLoading } = useAuth();
-  const [location, setLocation] = useLocation(); // Ottieni la funzione per cambiare rotta
-
-  // Effetto per reindirizzare dopo l'autenticazione
-  useEffect(() => {
-    if (!isLoading && isAuthenticated && location === "/") {
-      // Se l'utente è autenticato e si trova sulla landing page, reindirizza alla dashboard
-      setLocation("/dashboard");
-    } else if (!isLoading && !isAuthenticated && location !== "/") {
-      // Se l'utente non è autenticato e non è sulla landing page, reindirizza alla landing
-      // Questo gestisce il caso in cui un utente non loggato tenta di accedere a /dashboard
-      setLocation("/");
-    }
-  }, [isAuthenticated, isLoading, location, setLocation]);
 
   // Mostra una schermata di caricamento mentre l'autenticazione è in corso
   if (isLoading) {
@@ -53,12 +40,16 @@ export default function App() {
       </header>
       <main className="pt-20">
         <Router>
-          {/* Rotta pubblica: Landing Page */}
-          <Route path="/" component={Landing} />
-
-          {/* Rotta Dashboard (solo se autenticato) */}
+          {/* Se autenticato, mostra la Dashboard. Altrimenti, mostra la Landing. */}
+          {isAuthenticated ? (
+            <Route path="/" component={Dashboard} /> // Se loggato, la radice è la Dashboard
+          ) : (
+            <Route path="/" component={Landing} /> // Se non loggato, la radice è la Landing
+          )}
+          
+          {/* Rotta Dashboard (solo se autenticato) - Questo è un fallback o per accesso diretto */}
           <Route path="/dashboard">
-            {isAuthenticated ? <Dashboard /> : <Landing />} {/* Se non autenticato, mostra Landing */}
+            {isAuthenticated ? <Dashboard /> : <Landing />} {/* Proteggi la rotta */}
           </Route>
 
           {/* Rotta 404 (NotFound) - Gestisce tutte le rotte non corrispondenti */}
