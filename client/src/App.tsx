@@ -1,5 +1,5 @@
-import React from 'react';
-import { Router, Route } from 'wouter'; 
+import React, { useEffect } from 'react'; // Re-introduce useEffect
+import { Router, Route, useLocation } from 'wouter'; // Re-introduce useLocation
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
@@ -9,8 +9,26 @@ import { Button } from '@/components/ui/button';
 
 export default function App() {
   const { isAuthenticated, isLoading } = useAuth();
+  const [location, setLocation] = useLocation(); // Get location and setter
 
-  // Mostra una schermata di caricamento mentre l'autenticazione è in corso
+  // Effect to handle redirects based on authentication state
+  useEffect(() => {
+    if (!isLoading) { // Only act when Clerk's loading state is resolved
+      if (isAuthenticated) {
+        // If authenticated and not on dashboard, redirect to dashboard
+        if (location !== "/dashboard") {
+          setLocation("/dashboard");
+        }
+      } else {
+        // If not authenticated and not on landing, redirect to landing
+        if (location !== "/") {
+          setLocation("/");
+        }
+      }
+    }
+  }, [isAuthenticated, isLoading, location, setLocation]);
+
+  // Show a loading screen while authentication is in progress
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -19,7 +37,7 @@ export default function App() {
     );
   }
 
-  // Renderizza il layout generale dell'applicazione
+  // Render the main application layout
   return (
     <>
       <header className="fixed top-0 left-0 right-0 bg-white shadow-sm p-4 flex justify-between items-center z-10">
@@ -41,25 +59,27 @@ export default function App() {
       </header>
       <main className="pt-20">
         <Router>
-          {/* Se l'utente è autenticato, renderizza solo le rotte autenticate */}
-          {isAuthenticated ? (
+          {/* Routes for authenticated users */}
+          {isAuthenticated && (
             <>
-              <Route path="/" component={Dashboard} /> {/* La radice per l'utente autenticato è la Dashboard */}
-              <Route path="/dashboard" component={Dashboard} /> {/* Rotta esplicita per la Dashboard */}
-              {/* Aggiungi qui altre rotte autenticate */}
-              <Route component={NotFound} /> {/* 404 per rotte non autenticate */}
-            </>
-          ) : (
-            <>
-              {/* Se l'utente NON è autenticato, renderizza solo le rotte pubbliche */}
-              <Route path="/" component={Landing} /> {/* La radice per l'utente non autenticato è la Landing */}
-              {/* Tutte le altre rotte per utenti non autenticati portano al 404 */}
-              <Route component={NotFound} /> 
+              <Route path="/dashboard" component={Dashboard} />
+              {/* Other authenticated routes go here */}
             </>
           )}
+
+          {/* Routes for unauthenticated users */}
+          {!isAuthenticated && (
+            <>
+              <Route path="/" component={Landing} />
+            </>
+          )}
+
+          {/* Fallback for any unmatched routes. 
+              This should ideally only be hit for genuinely non-existent paths
+              after the useEffect has handled auth-based redirects. */}
+          <Route component={NotFound} />
         </Router>
       </main>
     </>
   );
 }
-
