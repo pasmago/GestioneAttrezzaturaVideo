@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'wouter'; // Rimuovi useLocation se non più usato
+import { Router, Route } from 'wouter'; 
 import { useAuth } from './hooks/useAuth';
 import Landing from './pages/landing';
 import Dashboard from './pages/dashboard';
@@ -19,6 +19,7 @@ export default function App() {
     );
   }
 
+  // Renderizza il layout generale dell'applicazione
   return (
     <>
       <header className="fixed top-0 left-0 right-0 bg-white shadow-sm p-4 flex justify-between items-center z-10">
@@ -40,22 +41,25 @@ export default function App() {
       </header>
       <main className="pt-20">
         <Router>
-          {/* Se autenticato, mostra la Dashboard. Altrimenti, mostra la Landing. */}
+          {/* Se l'utente è autenticato, renderizza solo le rotte autenticate */}
           {isAuthenticated ? (
-            <Route path="/" component={Dashboard} /> // Se loggato, la radice è la Dashboard
+            <>
+              <Route path="/" component={Dashboard} /> {/* La radice per l'utente autenticato è la Dashboard */}
+              <Route path="/dashboard" component={Dashboard} /> {/* Rotta esplicita per la Dashboard */}
+              {/* Aggiungi qui altre rotte autenticate */}
+              <Route component={NotFound} /> {/* 404 per rotte non autenticate */}
+            </>
           ) : (
-            <Route path="/" component={Landing} /> // Se non loggato, la radice è la Landing
+            <>
+              {/* Se l'utente NON è autenticato, renderizza solo le rotte pubbliche */}
+              <Route path="/" component={Landing} /> {/* La radice per l'utente non autenticato è la Landing */}
+              {/* Tutte le altre rotte per utenti non autenticati portano al 404 */}
+              <Route component={NotFound} /> 
+            </>
           )}
-          
-          {/* Rotta Dashboard (solo se autenticato) - Questo è un fallback o per accesso diretto */}
-          <Route path="/dashboard">
-            {isAuthenticated ? <Dashboard /> : <Landing />} {/* Proteggi la rotta */}
-          </Route>
-
-          {/* Rotta 404 (NotFound) - Gestisce tutte le rotte non corrispondenti */}
-          <Route component={NotFound} />
         </Router>
       </main>
     </>
   );
 }
+
