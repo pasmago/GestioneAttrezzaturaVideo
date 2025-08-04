@@ -25,7 +25,7 @@ export default function Landing() {
           </p>
           
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl */}
+            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl da SignInButton */}
             <SignInButton 
               mode="modal" 
               // fallbackRedirectUrl="/" <-- Rimuovi questa riga
@@ -126,7 +126,7 @@ export default function Landing() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Manutenzione Programmata</h4>
-                  <p className="text-gray-600">Gestione automatica degli interventi di manutenzione</p>
+                  <p className="text-sm text-gray-600">Gestione automatica degli interventi di manutenzione</p>
                 </div>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function Landing() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Gestione Ruoli</h4>
-                  <p className="text-sm text-gray-600">Controllo granulare degli accessi e delle funzionalità</p>
+                  <p className="text-gray-600">Controllo granulare degli accessi e delle funzionalità</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function Landing() {
             Accedi al sistema e inizia a gestire la tua attrezzatura video in modo professionale
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3" asChild>
-            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl */}
+            {/* RIMOSSO: fallbackRedirectUrl e forceRedirectUrl da SignInButton */}
             <SignInButton 
               mode="modal" 
               // fallbackRedirectUrl="/" <-- Rimuovi questa riga
